@@ -14,9 +14,9 @@ const groupSend = (res) => {
     .forEach((o) => o.send(JSON.stringify(res)));
 };
 
-const createInstance = () => {
+const createInstance = (id) => {
   const instance = {
-    id: uuid.v4(),
+    id,
     state: 'stopped',
   };
   instances.push(instance);
@@ -75,7 +75,7 @@ const removeInstance = (id) => {
 };
 
 wsServer.on('connection', (ws) => {
-  const res = {
+  let res = {
     event: 'instances',
     data: instances,
   };
@@ -83,6 +83,7 @@ wsServer.on('connection', (ws) => {
 
   ws.on('message', (msg) => {
     const req = JSON.parse(msg);
+    let id;
 
     switch (req.event) {
       case 'ping':
@@ -90,23 +91,48 @@ wsServer.on('connection', (ws) => {
         break;
 
       case 'create':
-        setInterval(createInstance, 20000);
-        ws.send(JSON.stringify({ event: 'received' }));
+        id = uuid.v4();
+        setInterval(() => createInstance(id), 20000);
+        res = {
+          event: 'received',
+          command: req.event,
+          id,
+          time: Date.now,
+        };
+        ws.send(JSON.stringify(res));
         break;
 
       case 'start':
         setInterval(() => startInstance(req.id), 20000);
-        ws.send(JSON.stringify({ event: 'received' }));
+        res = {
+          event: 'received',
+          command: req.event,
+          id: req.id,
+          time: Date.now,
+        };
+        ws.send(JSON.stringify(res));
         break;
 
       case 'stop':
         setInterval(() => stopInstance(req.id), 20000);
-        ws.send(JSON.stringify({ event: 'received' }));
+        res = {
+          event: 'received',
+          command: req.event,
+          id: req.id,
+          time: Date.now,
+        };
+        ws.send(JSON.stringify(res));
         break;
 
       case 'remove':
         setInterval(() => removeInstance(req.id), 20000);
-        ws.send(JSON.stringify({ event: 'received' }));
+        res = {
+          event: 'received',
+          command: req.event,
+          id: req.id,
+          time: Date.now,
+        };
+        ws.send(JSON.stringify(res));
         break;
 
       default:
