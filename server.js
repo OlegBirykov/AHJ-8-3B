@@ -92,7 +92,7 @@ wsServer.on('connection', (ws) => {
 
       case 'create':
         id = uuid.v4();
-        setInterval(() => createInstance(id), 20000);
+        setTimeout(() => createInstance(id), 20000);
         res = {
           event: 'received',
           command: req.event,
@@ -103,7 +103,7 @@ wsServer.on('connection', (ws) => {
         break;
 
       case 'start':
-        setInterval(() => startInstance(req.id), 20000);
+        setTimeout(() => startInstance(req.id), 20000);
         res = {
           event: 'received',
           command: req.event,
@@ -114,7 +114,7 @@ wsServer.on('connection', (ws) => {
         break;
 
       case 'stop':
-        setInterval(() => stopInstance(req.id), 20000);
+        setTimeout(() => stopInstance(req.id), 20000);
         res = {
           event: 'received',
           command: req.event,
@@ -125,7 +125,7 @@ wsServer.on('connection', (ws) => {
         break;
 
       case 'remove':
-        setInterval(() => removeInstance(req.id), 20000);
+        setTimeout(() => removeInstance(req.id), 20000);
         res = {
           event: 'received',
           command: req.event,
